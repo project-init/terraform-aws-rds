@@ -3,6 +3,7 @@
 Module used to set up an RDS cluster in AWS. Specifically set up for Postgres with a default of serverless as the
 instance type.
 
+
 ## Quick Start
 
 1. `mise format`

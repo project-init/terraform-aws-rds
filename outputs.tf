@@ -19,3 +19,32 @@ output "admin_user_secret" {
 output "iam_connect_user_policies" {
   value = aws_iam_policy.rds_user_connect_policy
 }
+
+output "env_variables" {
+  value = [
+    {
+      name  = "POSTGRES_DATABASE"
+      value = "data_platform"
+    },
+    {
+      name  = "POSTGRES_PORT"
+      value = "5432"
+    },
+    {
+      name  = "POSTGRES_READ_ONLY_HOST"
+      value = module.rds_cluster_aurora_postgres.reader_endpoint
+    },
+    {
+      name  = "POSTGRES_READ_ONLY_USER"
+      value = "data_platform_readonly"
+    },
+    {
+      name  = "POSTGRES_WRITER_HOST"
+      value = module.rds_cluster_aurora_postgres.endpoint
+    },
+    {
+      name  = "POSTGRES_WRITER_USER"
+      value = "data_platform_app"
+    }
+  ]
+}

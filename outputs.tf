@@ -24,11 +24,11 @@ output "env_variables" {
   value = [
     {
       name  = "POSTGRES_DATABASE"
-      value = "data_platform"
+      value = var.db_name
     },
     {
       name  = "POSTGRES_PORT"
-      value = "5432"
+      value = module.rds_cluster_aurora_postgres.port
     },
     {
       name  = "POSTGRES_READ_ONLY_HOST"
@@ -36,7 +36,7 @@ output "env_variables" {
     },
     {
       name  = "POSTGRES_READ_ONLY_USER"
-      value = "data_platform_readonly"
+      value = local.iam_connect_users[0]
     },
     {
       name  = "POSTGRES_WRITER_HOST"
@@ -44,7 +44,7 @@ output "env_variables" {
     },
     {
       name  = "POSTGRES_WRITER_USER"
-      value = "data_platform_app"
+      value = local.iam_connect_users[1]
     }
   ]
 }

@@ -78,6 +78,12 @@ variable "iam_connect_writer_user" {
   default     = "data_platform_writer"
 }
 
+variable "iam_connect_migration_user" {
+  type        = string
+  description = "Name of the user to allow access to the cluster for migrations."
+  default     = "data_platform_migration"
+}
+
 variable "iam_connect_extra_users" {
   type        = list(string)
   description = "List of additional users to allow RDS Connect access to the cluster."

@@ -36,7 +36,11 @@ output "env_variables" {
     },
     {
       name  = "POSTGRES_READ_ONLY_USER"
-      value = local.iam_connect_users[0]
+      value = var.iam_connect_readonly_user
+    },
+    {
+      name  = "POSTGRES_MIGRATION_USER"
+      value = var.iam_connect_migration_user
     },
     {
       name  = "POSTGRES_WRITER_HOST"
@@ -44,7 +48,7 @@ output "env_variables" {
     },
     {
       name  = "POSTGRES_WRITER_USER"
-      value = local.iam_connect_users[1]
+      value = var.iam_connect_writer_user
     }
   ]
 }

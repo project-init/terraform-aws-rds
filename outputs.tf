@@ -39,10 +39,6 @@ output "env_variables" {
       value = var.iam_connect_readonly_user
     },
     {
-      name  = "POSTGRES_MIGRATION_USER"
-      value = var.iam_connect_migration_user
-    },
-    {
       name  = "POSTGRES_WRITER_HOST"
       value = module.rds_cluster_aurora_postgres.endpoint
     },

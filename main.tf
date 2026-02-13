@@ -5,8 +5,19 @@ data "aws_region" "current" {}
 ### IAM (RDS Connect)
 ########################################################################################################################
 
+locals {
+  iam_connect_users = concat([var.iam_connect_readonly_user, var.iam_connect_writer_user, var.iam_connect_migration_user], var.iam_connect_extra_users)
+}
+
+check "validate_iam_connect_users" {
+  assert {
+    condition     = var.iam_connect_readonly_user != var.iam_connect_writer_user || var.iam_connect_writer_user != var.iam_connect_migration_user
+    error_message = "The readonly, writer, and migration users are all set to the same value (`${var.iam_connect_readonly_user}`). This is not recommended."
+  }
+}
+
 resource "aws_iam_policy" "rds_user_connect_policy" {
-  for_each = var.iam_connect_users
+  for_each = toset(local.iam_connect_users)
 
   name        = "${module.this.id}-rds-${each.key}-connect"
   description = "Grants rds-db:connect permission to use the PostgreSQL ${each.key} iam authentication."

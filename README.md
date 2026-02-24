@@ -35,7 +35,7 @@ Check our [Examples](examples) for full usage information.
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_rds_cluster_aurora_postgres"></a> [rds\_cluster\_aurora\_postgres](#module\_rds\_cluster\_aurora\_postgres) | cloudposse/rds-cluster/aws | 2.3.0 |
+| <a name="module_rds_cluster_aurora_postgres"></a> [rds\_cluster\_aurora\_postgres](#module\_rds\_cluster\_aurora\_postgres) | cloudposse/rds-cluster/aws | 2.4.0 |
 | <a name="module_this"></a> [this](#module\_this) | cloudposse/label/null | 0.25.0 |
 
 ## Resources

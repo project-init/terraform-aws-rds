@@ -42,7 +42,7 @@ resource "aws_iam_policy" "rds_user_connect_policy" {
 
 module "rds_cluster_aurora_postgres" {
   source  = "cloudposse/rds-cluster/aws"
-  version = "2.4.0"
+  version = "2.6.0"
 
   context = var.context
 

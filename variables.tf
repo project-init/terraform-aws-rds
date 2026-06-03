@@ -6,6 +6,7 @@ variable "cluster_family" {
       "aurora-postgresql15",
       "aurora-postgresql16",
       "aurora-postgresql17",
+      "aurora-postgresql18",
     ], var.cluster_family)
     error_message = "Cluster family must be a valid Aurora PostgreSQL family."
   }

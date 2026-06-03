@@ -6,9 +6,22 @@ variable "cluster_family" {
       "aurora-postgresql15",
       "aurora-postgresql16",
       "aurora-postgresql17",
+      "aurora-postgresql18",
     ], var.cluster_family)
     error_message = "Cluster family must be a valid Aurora PostgreSQL family."
   }
+}
+
+variable "cluster_parameter_group_name" {
+  type        = string
+  description = "Set of log types to export to CloudWatch. If null, the default group is used."
+  default     = null
+}
+
+variable "enabled_cloudwatch_logs_exports" {
+  type        = list(string)
+  description = "Set of log types to export to CloudWatch"
+  default     = []
 }
 
 variable "instance_type" {

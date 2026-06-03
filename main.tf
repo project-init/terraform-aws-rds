@@ -73,4 +73,7 @@ module "rds_cluster_aurora_postgres" {
 
   security_groups     = var.security_groups
   allowed_cidr_blocks = var.allowed_cidr_blocks
+
+  rds_cluster_parameter_group_name = var.cluster_parameter_group_name
+  enabled_cloudwatch_logs_exports  = var.enabled_cloudwatch_logs_exports
 }

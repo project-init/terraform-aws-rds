@@ -11,6 +11,11 @@ output "cluster_resource_id" {
   description = "The resource ID of the RDS cluster"
 }
 
+output "cluster_security_group_id" {
+  value       = module.rds_cluster_aurora_postgres.security_group_id
+  description = "The ID of the security group created for the RDS cluster"
+}
+
 output "admin_user_secret" {
   value       = module.rds_cluster_aurora_postgres.admin_user_secret
   description = "The Secrets Manager secret including the admin user credentials"

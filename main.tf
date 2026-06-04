@@ -29,7 +29,7 @@ resource "aws_iam_policy" "rds_user_connect_policy" {
         Effect = "Allow",
         Action = "rds-db:connect",
         Resource = [
-          "arn:aws:rds-db:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:dbuser:${module.rds_cluster_aurora_postgres.cluster_resource_id}/${each.key}",
+          "arn:aws:rds-db:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:dbuser:${module.rds_cluster_aurora_postgres.cluster_resource_id}/${each.key}",
         ],
       },
     ],

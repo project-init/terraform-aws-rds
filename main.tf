@@ -60,8 +60,7 @@ module "rds_cluster_aurora_postgres" {
   vpc_id  = var.vpc_id
   subnets = var.subnets
 
-  # RDS will manage admin credentials in Secrets Manager
-  manage_admin_user_password          = true
+  manage_admin_user_password          = var.manage_admin_user_password
   admin_user                          = "clusteradmin"
   iam_database_authentication_enabled = true
 

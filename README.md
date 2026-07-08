@@ -51,6 +51,8 @@ Check our [Examples](examples) for full usage information.
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_additional_tag_map"></a> [additional\_tag\_map](#input\_additional\_tag\_map) | Additional key-value pairs to add to each map in `tags_as_list_of_maps`. Not added to `tags` or `id`.<br/>This is for some rare cases where resources want additional configuration of tags<br/>and therefore take a list of maps with tag key, value, and additional configuration. | `map(string)` | `{}` | no |
+| <a name="input_admin_password"></a> [admin\_password](#input\_admin\_password) | The password for the admin user. If manage\_admin\_user\_password is true, this will be ignored and a random password will be generated and stored in AWS Secrets Manager. | `string` | `null` | no |
+| <a name="input_admin_user"></a> [admin\_user](#input\_admin\_user) | The name of the admin user for the cluster. Defaults to 'clusteradmin'. | `string` | `"clusteradmin"` | no |
 | <a name="input_allowed_cidr_blocks"></a> [allowed\_cidr\_blocks](#input\_allowed\_cidr\_blocks) | List of CIDR blocks allowed to access the cluster. | `list(string)` | `[]` | no |
 | <a name="input_attributes"></a> [attributes](#input\_attributes) | ID element. Additional attributes (e.g. `workers` or `cluster`) to add to `id`,<br/>in the order they appear in the list. New attributes are appended to the<br/>end of the list. The elements of the list are joined by the `delimiter`<br/>and treated as a single ID element. | `list(string)` | `[]` | no |
 | <a name="input_cluster_family"></a> [cluster\_family](#input\_cluster\_family) | The DB cluster parameter group family | `string` | n/a | yes |

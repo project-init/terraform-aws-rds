@@ -131,7 +131,7 @@ variable "manage_admin_user_password" {
   default     = true
 }
 
- variable "admin_user" {
+variable "admin_user" {
   type        = string
   description = "The name of the admin user for the cluster. Defaults to 'clusteradmin'."
   default     = "clusteradmin"

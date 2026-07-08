@@ -130,3 +130,16 @@ variable "manage_admin_user_password" {
   description = "Whether RDS should manage the admin user password in AWS Secrets Manager. Set to false to disable Secrets Manager integration (required for blue/green deployments)."
   default     = true
 }
+
+ variable "admin_user" {
+  type        = string
+  description = "The name of the admin user for the cluster. Defaults to 'clusteradmin'."
+  default     = "clusteradmin"
+}
+
+variable "admin_password" {
+  type        = string
+  description = "The password for the admin user. If manage_admin_user_password is true, this will be ignored and a random password will be generated and stored in AWS Secrets Manager."
+  default     = null
+  sensitive   = true
+}

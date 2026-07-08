@@ -62,7 +62,8 @@ module "rds_cluster_aurora_postgres" {
 
   # RDS will manage admin credentials in Secrets Manager
   manage_admin_user_password          = var.manage_admin_user_password
-  admin_user                          = "clusteradmin"
+  admin_user                          = var.admin_user
+  admin_password                      = var.admin_password
   iam_database_authentication_enabled = true
 
   serverlessv2_scaling_configuration = {

@@ -124,3 +124,9 @@ variable "vpc_id" {
   type        = string
   description = "The ID of the VPC to create the cluster in."
 }
+
+variable "manage_admin_user_password" {
+  type        = bool
+  description = "Whether RDS should manage the admin user password in AWS Secrets Manager. Set to false to disable Secrets Manager integration (required for blue/green deployments)."
+  default     = true
+}

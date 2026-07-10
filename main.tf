@@ -77,4 +77,9 @@ module "rds_cluster_aurora_postgres" {
 
   rds_cluster_parameter_group_name = var.cluster_parameter_group_name
   enabled_cloudwatch_logs_exports  = var.enabled_cloudwatch_logs_exports
+
+  # Stable suffix prevents random_pet regeneration on major version upgrades.
+  # Without this, changing cluster_family (a random_pet keeper) forces an instance
+  # rename → replacement → unnecessary writer failover on every major version bump.
+  instance_identifier_suffix = "1"
 }

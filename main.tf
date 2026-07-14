@@ -78,6 +78,8 @@ module "rds_cluster_aurora_postgres" {
   rds_cluster_parameter_group_name    = var.cluster_parameter_group_name
   db_parameter_group_name             = var.db_parameter_group_name
   parameter_group_name_prefix_enabled = var.parameter_group_name_prefix_enabled
+  cluster_parameters                  = var.cluster_parameters
+  instance_parameters                 = var.instance_parameters
   enabled_cloudwatch_logs_exports     = var.enabled_cloudwatch_logs_exports
 
   # Stable suffix prevents random_pet regeneration on major version upgrades.

@@ -155,3 +155,23 @@ variable "admin_password" {
   default     = null
   sensitive   = true
 }
+
+variable "cluster_parameters" {
+  type = list(object({
+    apply_method = string
+    name         = string
+    value        = string
+  }))
+  default     = []
+  description = "List of DB cluster parameters to apply"
+}
+
+variable "instance_parameters" {
+  type = list(object({
+    apply_method = string
+    name         = string
+    value        = string
+  }))
+  default     = []
+  description = "List of DB instance parameters to apply"
+}

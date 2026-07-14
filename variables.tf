@@ -14,8 +14,20 @@ variable "cluster_family" {
 
 variable "cluster_parameter_group_name" {
   type        = string
-  description = "Set of log types to export to CloudWatch. If null, the default group is used."
+  description = "Parameter group name to use for the RDS cluster."
   default     = null
+}
+
+variable "db_parameter_group_name" {
+  type        = string
+  description = "Parameter group name to use for the RDS instance."
+  default     = null
+}
+
+variable "parameter_group_name_prefix_enabled" {
+  type        = bool
+  default     = false
+  description = "Set to `true` to use `name_prefix` to name the cluster and database parameter groups. Set to `false` to use `name` instead"
 }
 
 variable "enabled_cloudwatch_logs_exports" {

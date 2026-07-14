@@ -175,3 +175,17 @@ variable "instance_parameters" {
   default     = []
   description = "List of DB instance parameters to apply"
 }
+
+variable "instance_identifier_suffix" {
+  type        = string
+  default     = "1"
+  nullable    = true
+  description = <<-EOT
+    The suffix to append to DB instance identifiers.
+    If `null`, the module will generate a random suffix. If empty, no suffix will be appended.
+
+    Stable suffix prevents random_pet regeneration on major version upgrades.
+    We default to "1", as without this, changing cluster_family (a random_pet keeper) forces an instance
+    rename → replacement → unnecessary writer failover on every major version bump.
+    EOT
+}

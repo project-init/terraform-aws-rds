@@ -15,12 +15,10 @@ module "rds" {
   cluster_family = "aurora-postgresql17"
   engine_version = "17.6"
   db_name        = "aurora"
-  cluster_size   = 1
+  cluster_size   = 2
 
-  # instance_type defaults to "db.serverless"; min/max_capacity are required for serverless
-  min_capacity             = 0
-  max_capacity             = 1.0
-  seconds_until_auto_pause = 1800
+  # Provisioned instance class — min/max_capacity are not required when not using serverless
+  instance_type = "db.r8g.large"
 
   iam_connect_readonly_user  = "readonly"
   iam_connect_writer_user    = "app"

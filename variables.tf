@@ -39,7 +39,7 @@ variable "enabled_cloudwatch_logs_exports" {
 variable "instance_type" {
   type        = string
   default     = "db.serverless"
-  description = "The instance type of the cluster. Defaults ot serverless."
+  description = "The instance type of the cluster. Use 'db.serverless' for Aurora Serverless v2, or a standard instance class (e.g. 'db.r8g.large') for provisioned."
 }
 
 variable "engine_mode" {
@@ -77,17 +77,19 @@ variable "db_port" {
 
 variable "max_capacity" {
   type        = number
-  description = "Maximum Aurora capacity unit for serverless cluster"
+  description = "Maximum Aurora capacity unit (ACU) for Serverless v2. Required when instance_type is 'db.serverless', ignored otherwise."
+  default     = null
 }
 
 variable "min_capacity" {
   type        = number
-  description = "Minimum Aurora capacity unit for serverless cluster"
+  description = "Minimum Aurora capacity unit (ACU) for Serverless v2. Required when instance_type is 'db.serverless', ignored otherwise."
+  default     = null
 }
 
 variable "seconds_until_auto_pause" {
   type        = number
-  description = "Seconds until the serverless cluster is automatically paused"
+  description = "Seconds of inactivity before a Serverless v2 cluster auto-pauses. Only applies when min_capacity is 0."
   default     = 300
 }
 

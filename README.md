@@ -59,6 +59,7 @@ Check our [Examples](examples) for full usage information.
 | <a name="input_cluster_parameter_group_name"></a> [cluster\_parameter\_group\_name](#input\_cluster\_parameter\_group\_name) | Parameter group name to use for the RDS cluster. | `string` | `null` | no |
 | <a name="input_cluster_parameters"></a> [cluster\_parameters](#input\_cluster\_parameters) | List of DB cluster parameters to apply | <pre>list(object({<br/>    apply_method = string<br/>    name         = string<br/>    value        = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Size of the cluster | `number` | n/a | yes |
+| <a name="input_cluster_type"></a> [cluster\_type](#input\_cluster\_type) | Whether this is a regional or global cluster. | `string` | `"regional"` | no |
 | <a name="input_context"></a> [context](#input\_context) | Single object for setting entire context at once.<br/>See description of individual variables for details.<br/>Leave string and numeric variables as `null` to use default value.<br/>Individual variable settings (non-null) override settings in context object,<br/>except for attributes, tags, and additional\_tag\_map, which are merged. | `any` | <pre>{<br/>  "additional_tag_map": {},<br/>  "attributes": [],<br/>  "delimiter": null,<br/>  "descriptor_formats": {},<br/>  "enabled": true,<br/>  "environment": null,<br/>  "id_length_limit": null,<br/>  "label_key_case": null,<br/>  "label_order": [],<br/>  "label_value_case": null,<br/>  "labels_as_tags": [<br/>    "unset"<br/>  ],<br/>  "name": null,<br/>  "namespace": null,<br/>  "regex_replace_chars": null,<br/>  "stage": null,<br/>  "tags": {},<br/>  "tenant": null<br/>}</pre> | no |
 | <a name="input_db_name"></a> [db\_name](#input\_db\_name) | Name of the database to create | `string` | n/a | yes |
 | <a name="input_db_parameter_group_name"></a> [db\_parameter\_group\_name](#input\_db\_parameter\_group\_name) | Parameter group name to use for the RDS instance. | `string` | `null` | no |
@@ -70,6 +71,7 @@ Check our [Examples](examples) for full usage information.
 | <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The engine mode of the cluster. Defaults to provisioned. | `string` | `"provisioned"` | no |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | Aurora PostgreSQL engine version | `string` | `"17.6"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | ID element. Usually used for region e.g. 'uw2', 'us-west-2', OR role 'prod', 'staging', 'dev', 'UAT' | `string` | `null` | no |
+| <a name="input_global_cluster_identifier"></a> [global\_cluster\_identifier](#input\_global\_cluster\_identifier) | Identifier of the Global cluster the regional cluster belongs to. | `string` | `null` | no |
 | <a name="input_iam_connect_extra_users"></a> [iam\_connect\_extra\_users](#input\_iam\_connect\_extra\_users) | List of additional users to allow RDS Connect access to the cluster. | `list(string)` | `[]` | no |
 | <a name="input_iam_connect_migration_user"></a> [iam\_connect\_migration\_user](#input\_iam\_connect\_migration\_user) | Name of the user to allow access to the cluster for migrations. | `string` | `"data_platform_migration"` | no |
 | <a name="input_iam_connect_readonly_user"></a> [iam\_connect\_readonly\_user](#input\_iam\_connect\_readonly\_user) | Name of the user to allow read-only access to the cluster. | `string` | `"data_platform_readonly"` | no |
@@ -102,6 +104,8 @@ Check our [Examples](examples) for full usage information.
 | Name | Description |
 | ---- | ----------- |
 | <a name="output_admin_user_secret"></a> [admin\_user\_secret](#output\_admin\_user\_secret) | The Secrets Manager secret including the admin user credentials |
+| <a name="output_cluster_arn"></a> [cluster\_arn](#output\_cluster\_arn) | ARN of the cluster |
+| <a name="output_cluster_identifier"></a> [cluster\_identifier](#output\_cluster\_identifier) | Identifier of the cluster |
 | <a name="output_cluster_resource_id"></a> [cluster\_resource\_id](#output\_cluster\_resource\_id) | The resource ID of the RDS cluster |
 | <a name="output_cluster_security_group_id"></a> [cluster\_security\_group\_id](#output\_cluster\_security\_group\_id) | The ID of the security group created for the RDS cluster |
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | n/a |

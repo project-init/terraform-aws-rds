@@ -55,6 +55,9 @@ module "rds_cluster_aurora_postgres" {
   storage_encrypted   = true
   deletion_protection = true
 
+  cluster_type              = var.cluster_type
+  global_cluster_identifier = var.global_cluster_identifier == null ? "" : var.global_cluster_identifier
+
   db_name = var.db_name
   db_port = var.db_port
   vpc_id  = var.vpc_id

@@ -44,6 +44,7 @@ Check our [Examples](examples) for full usage information.
 | Name | Type |
 | ---- | ---- |
 | [aws_iam_policy.rds_user_connect_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [terraform_data.global_cluster_preconditions](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.serverless_capacity_required](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
@@ -60,10 +61,10 @@ Check our [Examples](examples) for full usage information.
 | <a name="input_cluster_family"></a> [cluster\_family](#input\_cluster\_family) | The DB cluster parameter group family | `string` | n/a | yes |
 | <a name="input_cluster_parameter_group_name"></a> [cluster\_parameter\_group\_name](#input\_cluster\_parameter\_group\_name) | Parameter group name to use for the RDS cluster. | `string` | `null` | no |
 | <a name="input_cluster_parameters"></a> [cluster\_parameters](#input\_cluster\_parameters) | List of DB cluster parameters to apply | <pre>list(object({<br/>    apply_method = string<br/>    name         = string<br/>    value        = string<br/>  }))</pre> | `[]` | no |
+| <a name="input_cluster_role"></a> [cluster\_role](#input\_cluster\_role) | Role of this cluster within a Global Aurora setup. Use 'standalone' for single-region clusters, 'primary' for the writer region of a global cluster, or 'secondary' for read replica regions. | `string` | `"standalone"` | no |
 | <a name="input_cluster_size"></a> [cluster\_size](#input\_cluster\_size) | Size of the cluster | `number` | n/a | yes |
-| <a name="input_cluster_type"></a> [cluster\_type](#input\_cluster\_type) | Whether this is a regional or global cluster. | `string` | `"regional"` | no |
 | <a name="input_context"></a> [context](#input\_context) | Single object for setting entire context at once.<br/>See description of individual variables for details.<br/>Leave string and numeric variables as `null` to use default value.<br/>Individual variable settings (non-null) override settings in context object,<br/>except for attributes, tags, and additional\_tag\_map, which are merged. | `any` | <pre>{<br/>  "additional_tag_map": {},<br/>  "attributes": [],<br/>  "delimiter": null,<br/>  "descriptor_formats": {},<br/>  "enabled": true,<br/>  "environment": null,<br/>  "id_length_limit": null,<br/>  "label_key_case": null,<br/>  "label_order": [],<br/>  "label_value_case": null,<br/>  "labels_as_tags": [<br/>    "unset"<br/>  ],<br/>  "name": null,<br/>  "namespace": null,<br/>  "regex_replace_chars": null,<br/>  "stage": null,<br/>  "tags": {},<br/>  "tenant": null<br/>}</pre> | no |
-| <a name="input_db_name"></a> [db\_name](#input\_db\_name) | Name of the database to create | `string` | n/a | yes |
+| <a name="input_db_name"></a> [db\_name](#input\_db\_name) | Name of the database to create. Required for standalone and primary clusters; must not be set for secondary clusters (replicated from primary). | `string` | `null` | no |
 | <a name="input_db_parameter_group_name"></a> [db\_parameter\_group\_name](#input\_db\_parameter\_group\_name) | Parameter group name to use for the RDS instance. | `string` | `null` | no |
 | <a name="input_db_port"></a> [db\_port](#input\_db\_port) | Port on which the DB accepts connections | `number` | `5432` | no |
 | <a name="input_delimiter"></a> [delimiter](#input\_delimiter) | Delimiter to be used between ID elements.<br/>Defaults to `-` (hyphen). Set to `""` to use no delimiter at all. | `string` | `null` | no |
@@ -73,7 +74,7 @@ Check our [Examples](examples) for full usage information.
 | <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The engine mode of the cluster. Defaults to provisioned. | `string` | `"provisioned"` | no |
 | <a name="input_engine_version"></a> [engine\_version](#input\_engine\_version) | Aurora PostgreSQL engine version | `string` | `"17.6"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | ID element. Usually used for region e.g. 'uw2', 'us-west-2', OR role 'prod', 'staging', 'dev', 'UAT' | `string` | `null` | no |
-| <a name="input_global_cluster_identifier"></a> [global\_cluster\_identifier](#input\_global\_cluster\_identifier) | Identifier of the Global cluster the regional cluster belongs to. | `string` | `null` | no |
+| <a name="input_global_cluster_identifier"></a> [global\_cluster\_identifier](#input\_global\_cluster\_identifier) | Identifier of the aws\_rds\_global\_cluster this regional cluster belongs to. Required when cluster\_role is 'primary' or 'secondary'. | `string` | `null` | no |
 | <a name="input_iam_connect_extra_users"></a> [iam\_connect\_extra\_users](#input\_iam\_connect\_extra\_users) | List of additional users to allow RDS Connect access to the cluster. | `list(string)` | `[]` | no |
 | <a name="input_iam_connect_migration_user"></a> [iam\_connect\_migration\_user](#input\_iam\_connect\_migration\_user) | Name of the user to allow access to the cluster for migrations. | `string` | `"data_platform_migration"` | no |
 | <a name="input_iam_connect_readonly_user"></a> [iam\_connect\_readonly\_user](#input\_iam\_connect\_readonly\_user) | Name of the user to allow read-only access to the cluster. | `string` | `"data_platform_readonly"` | no |

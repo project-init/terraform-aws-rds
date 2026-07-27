@@ -61,7 +61,8 @@ variable "cluster_size" {
 
 variable "db_name" {
   type        = string
-  description = "Name of the database to create"
+  description = "Name of the database to create. Required for standalone and primary clusters; must not be set for secondary clusters (replicated from primary)."
+  default     = null
 }
 
 variable "db_port" {
@@ -192,19 +193,19 @@ variable "instance_identifier_suffix" {
     EOT
 }
 
-variable "cluster_type" {
+variable "cluster_role" {
   type        = string
-  description = "Whether this is a regional or global cluster."
-  default     = "regional"
+  description = "Role of this cluster within a Global Aurora setup. Use 'standalone' for single-region clusters, 'primary' for the writer region of a global cluster, or 'secondary' for read replica regions."
+  default     = "standalone"
 
   validation {
-    condition     = contains(["regional", "global"], var.cluster_type)
-    error_message = "cluster_type must be either regional or global"
+    condition     = contains(["standalone", "primary", "secondary"], var.cluster_role)
+    error_message = "cluster_role must be one of: standalone, primary, secondary."
   }
 }
 
 variable "global_cluster_identifier" {
   type        = string
-  description = "Identifier of the Global cluster the regional cluster belongs to."
+  description = "Identifier of the aws_rds_global_cluster this regional cluster belongs to. Required when cluster_role is 'primary' or 'secondary'."
   default     = null
 }

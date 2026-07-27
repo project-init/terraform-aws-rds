@@ -19,6 +19,15 @@ locals {
   # Derive the underlying cluster_type expected by the cloudposse module.
   # standalone maps to "regional"; primary and secondary both join a global cluster.
   cluster_type = var.cluster_role == "standalone" ? "regional" : "global"
+
+  # AWS rejects MasterUsername/MasterPassword on secondary cross-region clusters.
+  admin_user     = var.cluster_role == "secondary" ? null : var.admin_user
+  admin_password = var.cluster_role == "secondary" ? null : var.admin_password
+
+  autoscaling_metric_type = {
+    cpu         = "RDSReaderAverageCPUUtilization"
+    connections = "RDSReaderAverageDatabaseConnections"
+  }
 }
 
 check "validate_iam_connect_users" {
@@ -57,6 +66,28 @@ resource "terraform_data" "serverless_capacity_required" {
     precondition {
       condition     = !local.is_serverless || (var.min_capacity != null && var.max_capacity != null)
       error_message = "min_capacity and max_capacity are required when instance_type is 'db.serverless'."
+    }
+  }
+}
+
+resource "terraform_data" "autoscaling_preconditions" {
+  lifecycle {
+    precondition {
+      condition     = !var.enable_autoscaling || !local.is_serverless
+      error_message = "enable_autoscaling cannot be used with db.serverless — use min_capacity/max_capacity for Serverless v2 scaling."
+    }
+    precondition {
+      condition     = !var.enable_autoscaling || var.cluster_role != "secondary"
+      error_message = "enable_autoscaling cannot be used on a secondary cluster."
+    }
+    precondition {
+      condition = !var.enable_autoscaling || (
+        var.autoscaling_min_replicas != null &&
+        var.autoscaling_max_replicas != null &&
+        var.autoscaling_target_value != null &&
+        var.autoscaling_max_replicas > var.autoscaling_min_replicas
+      )
+      error_message = "autoscaling_min_replicas, autoscaling_max_replicas (must be > min), and autoscaling_target_value are all required when enable_autoscaling is true."
     }
   }
 }
@@ -110,8 +141,8 @@ module "rds_cluster_aurora_postgres" {
 
   # RDS will manage admin credentials in Secrets Manager
   manage_admin_user_password          = var.manage_admin_user_password
-  admin_user                          = var.admin_user
-  admin_password                      = var.admin_password
+  admin_user                          = local.admin_user
+  admin_password                      = local.admin_password
   iam_database_authentication_enabled = true
 
   serverlessv2_scaling_configuration = local.serverlessv2_scaling_configuration
@@ -127,4 +158,38 @@ module "rds_cluster_aurora_postgres" {
 
   enabled_cloudwatch_logs_exports = var.enabled_cloudwatch_logs_exports
   instance_identifier_suffix      = var.instance_identifier_suffix
+}
+
+########################################################################################################################
+### Autoscaling
+########################################################################################################################
+
+resource "aws_appautoscaling_target" "read_replica" {
+  count      = var.enable_autoscaling ? 1 : 0
+  depends_on = [terraform_data.autoscaling_preconditions]
+
+  service_namespace  = "rds"
+  scalable_dimension = "rds:cluster:ReadReplicaCount"
+  resource_id        = "cluster:${module.rds_cluster_aurora_postgres.cluster_identifier}"
+  min_capacity       = var.autoscaling_min_replicas
+  max_capacity       = var.autoscaling_max_replicas
+}
+
+resource "aws_appautoscaling_policy" "read_replica" {
+  count = var.enable_autoscaling ? 1 : 0
+
+  name               = "${module.this.id}-replica-autoscaling"
+  policy_type        = "TargetTrackingScaling"
+  service_namespace  = aws_appautoscaling_target.read_replica[0].service_namespace
+  scalable_dimension = aws_appautoscaling_target.read_replica[0].scalable_dimension
+  resource_id        = aws_appautoscaling_target.read_replica[0].resource_id
+
+  target_tracking_scaling_policy_configuration {
+    predefined_metric_specification {
+      predefined_metric_type = local.autoscaling_metric_type[var.autoscaling_metric]
+    }
+    target_value       = var.autoscaling_target_value
+    scale_in_cooldown  = var.autoscaling_scale_in_cooldown
+    scale_out_cooldown = var.autoscaling_scale_out_cooldown
+  }
 }

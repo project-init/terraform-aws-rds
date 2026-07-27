@@ -43,7 +43,10 @@ Check our [Examples](examples) for full usage information.
 
 | Name | Type |
 | ---- | ---- |
+| [aws_appautoscaling_policy.read_replica](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/appautoscaling_policy) | resource |
+| [aws_appautoscaling_target.read_replica](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/appautoscaling_target) | resource |
 | [aws_iam_policy.rds_user_connect_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [terraform_data.autoscaling_preconditions](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.global_cluster_preconditions](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.serverless_capacity_required](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
@@ -58,6 +61,12 @@ Check our [Examples](examples) for full usage information.
 | <a name="input_admin_user"></a> [admin\_user](#input\_admin\_user) | The name of the admin user for the cluster. Defaults to 'clusteradmin'. | `string` | `"clusteradmin"` | no |
 | <a name="input_allowed_cidr_blocks"></a> [allowed\_cidr\_blocks](#input\_allowed\_cidr\_blocks) | List of CIDR blocks allowed to access the cluster. | `list(string)` | `[]` | no |
 | <a name="input_attributes"></a> [attributes](#input\_attributes) | ID element. Additional attributes (e.g. `workers` or `cluster`) to add to `id`,<br/>in the order they appear in the list. New attributes are appended to the<br/>end of the list. The elements of the list are joined by the `delimiter`<br/>and treated as a single ID element. | `list(string)` | `[]` | no |
+| <a name="input_autoscaling_max_replicas"></a> [autoscaling\_max\_replicas](#input\_autoscaling\_max\_replicas) | Maximum number of read replicas. Required when enable\_autoscaling is true. | `number` | `null` | no |
+| <a name="input_autoscaling_metric"></a> [autoscaling\_metric](#input\_autoscaling\_metric) | Metric to scale on. One of 'cpu' or 'connections'. | `string` | `"cpu"` | no |
+| <a name="input_autoscaling_min_replicas"></a> [autoscaling\_min\_replicas](#input\_autoscaling\_min\_replicas) | Minimum number of read replicas. Required when enable\_autoscaling is true. | `number` | `null` | no |
+| <a name="input_autoscaling_scale_in_cooldown"></a> [autoscaling\_scale\_in\_cooldown](#input\_autoscaling\_scale\_in\_cooldown) | Seconds to wait after a scale-in event before allowing another scale-in. | `number` | `300` | no |
+| <a name="input_autoscaling_scale_out_cooldown"></a> [autoscaling\_scale\_out\_cooldown](#input\_autoscaling\_scale\_out\_cooldown) | Seconds to wait after a scale-out event before allowing another scale-out. | `number` | `300` | no |
+| <a name="input_autoscaling_target_value"></a> [autoscaling\_target\_value](#input\_autoscaling\_target\_value) | Target value for the scaling metric. Percentage (0-100) for 'cpu'; average count for 'connections'. Required when enable\_autoscaling is true. | `number` | `null` | no |
 | <a name="input_cluster_family"></a> [cluster\_family](#input\_cluster\_family) | The DB cluster parameter group family | `string` | n/a | yes |
 | <a name="input_cluster_parameter_group_name"></a> [cluster\_parameter\_group\_name](#input\_cluster\_parameter\_group\_name) | Parameter group name to use for the RDS cluster. | `string` | `null` | no |
 | <a name="input_cluster_parameters"></a> [cluster\_parameters](#input\_cluster\_parameters) | List of DB cluster parameters to apply | <pre>list(object({<br/>    apply_method = string<br/>    name         = string<br/>    value        = string<br/>  }))</pre> | `[]` | no |
@@ -69,6 +78,7 @@ Check our [Examples](examples) for full usage information.
 | <a name="input_db_port"></a> [db\_port](#input\_db\_port) | Port on which the DB accepts connections | `number` | `5432` | no |
 | <a name="input_delimiter"></a> [delimiter](#input\_delimiter) | Delimiter to be used between ID elements.<br/>Defaults to `-` (hyphen). Set to `""` to use no delimiter at all. | `string` | `null` | no |
 | <a name="input_descriptor_formats"></a> [descriptor\_formats](#input\_descriptor\_formats) | Describe additional descriptors to be output in the `descriptors` output map.<br/>Map of maps. Keys are names of descriptors. Values are maps of the form<br/>`{<br/>   format = string<br/>   labels = list(string)<br/>}`<br/>(Type is `any` so the map values can later be enhanced to provide additional options.)<br/>`format` is a Terraform format string to be passed to the `format()` function.<br/>`labels` is a list of labels, in order, to pass to `format()` function.<br/>Label values will be normalized before being passed to `format()` so they will be<br/>identical to how they appear in `id`.<br/>Default is `{}` (`descriptors` output will be empty). | `any` | `{}` | no |
+| <a name="input_enable_autoscaling"></a> [enable\_autoscaling](#input\_enable\_autoscaling) | Enable Application Auto Scaling for Aurora read replicas. Only valid for provisioned standalone or primary clusters. | `bool` | `false` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Set to false to prevent the module from creating any resources | `bool` | `null` | no |
 | <a name="input_enabled_cloudwatch_logs_exports"></a> [enabled\_cloudwatch\_logs\_exports](#input\_enabled\_cloudwatch\_logs\_exports) | Set of log types to export to CloudWatch | `list(string)` | `[]` | no |
 | <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The engine mode of the cluster. Defaults to provisioned. | `string` | `"provisioned"` | no |

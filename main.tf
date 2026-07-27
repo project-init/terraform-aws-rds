@@ -7,6 +7,14 @@ data "aws_region" "current" {}
 
 locals {
   iam_connect_users = concat([var.iam_connect_readonly_user, var.iam_connect_writer_user, var.iam_connect_migration_user], var.iam_connect_extra_users)
+
+  is_serverless = var.instance_type == "db.serverless"
+
+  serverlessv2_scaling_configuration = local.is_serverless ? {
+    max_capacity             = var.max_capacity
+    min_capacity             = var.min_capacity
+    seconds_until_auto_pause = var.seconds_until_auto_pause
+  } : null
 }
 
 check "validate_iam_connect_users" {
@@ -40,6 +48,15 @@ resource "aws_iam_policy" "rds_user_connect_policy" {
 ### RDS
 ########################################################################################################################
 
+resource "terraform_data" "serverless_capacity_required" {
+  lifecycle {
+    precondition {
+      condition     = !local.is_serverless || (var.min_capacity != null && var.max_capacity != null)
+      error_message = "min_capacity and max_capacity are required when instance_type is 'db.serverless'."
+    }
+  }
+}
+
 module "rds_cluster_aurora_postgres" {
   source  = "cloudposse/rds-cluster/aws"
   version = "2.6.0"
@@ -69,11 +86,7 @@ module "rds_cluster_aurora_postgres" {
   admin_password                      = var.admin_password
   iam_database_authentication_enabled = true
 
-  serverlessv2_scaling_configuration = {
-    max_capacity             = var.max_capacity
-    min_capacity             = var.min_capacity
-    seconds_until_auto_pause = var.seconds_until_auto_pause
-  }
+  serverlessv2_scaling_configuration = local.serverlessv2_scaling_configuration
 
   security_groups     = var.security_groups
   allowed_cidr_blocks = var.allowed_cidr_blocks

@@ -43,7 +43,10 @@ Check our [Examples](examples) for full usage information.
 
 | Name | Type |
 | ---- | ---- |
+| [aws_appautoscaling_policy.read_replica](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/appautoscaling_policy) | resource |
+| [aws_appautoscaling_target.read_replica](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/appautoscaling_target) | resource |
 | [aws_iam_policy.rds_user_connect_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
+| [terraform_data.autoscaling_preconditions](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.global_cluster_preconditions](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [terraform_data.serverless_capacity_required](https://registry.terraform.io/providers/hashicorp/terraform/latest/docs/resources/data) | resource |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
@@ -58,6 +61,12 @@ Check our [Examples](examples) for full usage information.
 | <a name="input_admin_user"></a> [admin\_user](#input\_admin\_user) | The name of the admin user for the cluster. Defaults to 'clusteradmin'. | `string` | `"clusteradmin"` | no |
 | <a name="input_allowed_cidr_blocks"></a> [allowed\_cidr\_blocks](#input\_allowed\_cidr\_blocks) | List of CIDR blocks allowed to access the cluster. | `list(string)` | `[]` | no |
 | <a name="input_attributes"></a> [attributes](#input\_attributes) | ID element. Additional attributes (e.g. `workers` or `cluster`) to add to `id`,<br/>in the order they appear in the list. New attributes are appended to the<br/>end of the list. The elements of the list are joined by the `delimiter`<br/>and treated as a single ID element. | `list(string)` | `[]` | no |
+| <a name="input_autoscaling_max_replicas"></a> [autoscaling\_max\_replicas](#input\_autoscaling\_max\_replicas) | Maximum number of read replicas. Required when enable\_autoscaling is true. | `number` | `null` | no |
+| <a name="input_autoscaling_metric"></a> [autoscaling\_metric](#input\_autoscaling\_metric) | Metric to scale on. One of 'cpu' or 'connections'. | `string` | `"cpu"` | no |
+| <a name="input_autoscaling_min_replicas"></a> [autoscaling\_min\_replicas](#input\_autoscaling\_min\_replicas) | Minimum number of read replicas. Required when enable\_autoscaling is true. | `number` | `null` | no |
+| <a name="input_autoscaling_scale_in_cooldown"></a> [autoscaling\_scale\_in\_cooldown](#input\_autoscaling\_scale\_in\_cooldown) | Seconds to wait after a scale-in event before allowing another scale-in. | `number` | `300` | no |
+| <a name="input_autoscaling_scale_out_cooldown"></a> [autoscaling\_scale\_out\_cooldown](#input\_autoscaling\_scale\_out\_cooldown) | Seconds to wait after a scale-out event before allowing another scale-out. | `number` | `300` | no |
+| <a name="input_autoscaling_target_value"></a> [autoscaling\_target\_value](#input\_autoscaling\_target\_value) | Target value for the scaling metric. Percentage (0-100) for 'cpu'; average count for 'connections'. Required when enable\_autoscaling is true. | `number` | `null` | no |
 | <a name="input_cluster_family"></a> [cluster\_family](#input\_cluster\_family) | The DB cluster parameter group family | `string` | n/a | yes |
 | <a name="input_cluster_parameter_group_name"></a> [cluster\_parameter\_group\_name](#input\_cluster\_parameter\_group\_name) | Parameter group name to use for the RDS cluster. | `string` | `null` | no |
 | <a name="input_cluster_parameters"></a> [cluster\_parameters](#input\_cluster\_parameters) | List of DB cluster parameters to apply | <pre>list(object({<br/>    apply_method = string<br/>    name         = string<br/>    value        = string<br/>  }))</pre> | `[]` | no |
@@ -69,6 +78,7 @@ Check our [Examples](examples) for full usage information.
 | <a name="input_db_port"></a> [db\_port](#input\_db\_port) | Port on which the DB accepts connections | `number` | `5432` | no |
 | <a name="input_delimiter"></a> [delimiter](#input\_delimiter) | Delimiter to be used between ID elements.<br/>Defaults to `-` (hyphen). Set to `""` to use no delimiter at all. | `string` | `null` | no |
 | <a name="input_descriptor_formats"></a> [descriptor\_formats](#input\_descriptor\_formats) | Describe additional descriptors to be output in the `descriptors` output map.<br/>Map of maps. Keys are names of descriptors. Values are maps of the form<br/>`{<br/>   format = string<br/>   labels = list(string)<br/>}`<br/>(Type is `any` so the map values can later be enhanced to provide additional options.)<br/>`format` is a Terraform format string to be passed to the `format()` function.<br/>`labels` is a list of labels, in order, to pass to `format()` function.<br/>Label values will be normalized before being passed to `format()` so they will be<br/>identical to how they appear in `id`.<br/>Default is `{}` (`descriptors` output will be empty). | `any` | `{}` | no |
+| <a name="input_enable_autoscaling"></a> [enable\_autoscaling](#input\_enable\_autoscaling) | Enable Application Auto Scaling for Aurora read replicas. Only valid for provisioned standalone or primary clusters. | `bool` | `false` | no |
 | <a name="input_enabled"></a> [enabled](#input\_enabled) | Set to false to prevent the module from creating any resources | `bool` | `null` | no |
 | <a name="input_enabled_cloudwatch_logs_exports"></a> [enabled\_cloudwatch\_logs\_exports](#input\_enabled\_cloudwatch\_logs\_exports) | Set of log types to export to CloudWatch | `list(string)` | `[]` | no |
 | <a name="input_engine_mode"></a> [engine\_mode](#input\_engine\_mode) | The engine mode of the cluster. Defaults to provisioned. | `string` | `"provisioned"` | no |
@@ -83,6 +93,7 @@ Check our [Examples](examples) for full usage information.
 | <a name="input_instance_identifier_suffix"></a> [instance\_identifier\_suffix](#input\_instance\_identifier\_suffix) | The suffix to append to DB instance identifiers.<br/>If `null`, the module will generate a random suffix. If empty, no suffix will be appended.<br/><br/>Stable suffix prevents random\_pet regeneration on major version upgrades.<br/>We default to "1", as without this, changing cluster\_family (a random\_pet keeper) forces an instance<br/>rename → replacement → unnecessary writer failover on every major version bump. | `string` | `"1"` | no |
 | <a name="input_instance_parameters"></a> [instance\_parameters](#input\_instance\_parameters) | List of DB instance parameters to apply | <pre>list(object({<br/>    apply_method = string<br/>    name         = string<br/>    value        = string<br/>  }))</pre> | `[]` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The instance type of the cluster. Use 'db.serverless' for Aurora Serverless v2, or a standard instance class (e.g. 'db.r8g.large') for provisioned. | `string` | `"db.serverless"` | no |
+| <a name="input_kms_key_arn"></a> [kms\_key\_arn](#input\_kms\_key\_arn) | ARN of the KMS key to use for storage encryption. Required when cluster\_role is 'secondary' (AWS requires an explicit KMS key for encrypted cross-region replicas). | `string` | `null` | no |
 | <a name="input_label_key_case"></a> [label\_key\_case](#input\_label\_key\_case) | Controls the letter case of the `tags` keys (label names) for tags generated by this module.<br/>Does not affect keys of tags passed in via the `tags` input.<br/>Possible values: `lower`, `title`, `upper`.<br/>Default value: `title`. | `string` | `null` | no |
 | <a name="input_label_order"></a> [label\_order](#input\_label\_order) | The order in which the labels (ID elements) appear in the `id`.<br/>Defaults to ["namespace", "environment", "stage", "name", "attributes"].<br/>You can omit any of the 6 labels ("tenant" is the 6th), but at least one must be present. | `list(string)` | `null` | no |
 | <a name="input_label_value_case"></a> [label\_value\_case](#input\_label\_value\_case) | Controls the letter case of ID elements (labels) as included in `id`,<br/>set as tag values, and output by this module individually.<br/>Does not affect values of tags passed in via the `tags` input.<br/>Possible values: `lower`, `title`, `upper` and `none` (no transformation).<br/>Set this to `title` and set `delimiter` to `""` to yield Pascal Case IDs.<br/>Default value: `lower`. | `string` | `null` | no |
@@ -114,5 +125,6 @@ Check our [Examples](examples) for full usage information.
 | <a name="output_endpoint"></a> [endpoint](#output\_endpoint) | n/a |
 | <a name="output_env_variables"></a> [env\_variables](#output\_env\_variables) | n/a |
 | <a name="output_iam_connect_user_policies"></a> [iam\_connect\_user\_policies](#output\_iam\_connect\_user\_policies) | n/a |
+| <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | ARN of the KMS key used for storage encryption. Useful when passing the primary region's key ARN to a secondary cluster module. |
 | <a name="output_read_only_endpoint"></a> [read\_only\_endpoint](#output\_read\_only\_endpoint) | n/a |
 <!-- END_TF_DOCS -->

@@ -104,6 +104,27 @@ module "rds_primary" {
 }
 
 ########################################################################################################################
+### KMS key — secondary region
+# AWS requires an explicit KMS key for encrypted cross-region replicas. Create one
+# in the secondary region and pass its ARN to the secondary cluster module.
+########################################################################################################################
+
+resource "aws_kms_key" "rds_secondary" {
+  provider = aws.secondary
+
+  description             = "KMS key for RDS secondary cluster encryption"
+  deletion_window_in_days = 7
+  enable_key_rotation     = true
+}
+
+resource "aws_kms_alias" "rds_secondary" {
+  provider = aws.secondary
+
+  name          = "alias/${module.label_secondary.id}"
+  target_key_id = aws_kms_key.rds_secondary.key_id
+}
+
+########################################################################################################################
 ### Secondary cluster (us-west-2)
 # The secondary must be created after the primary is available. Use depends_on
 # to enforce ordering, since there is no direct resource reference between them.
@@ -126,6 +147,10 @@ module "rds_secondary" {
   engine_version = "17.6"
   cluster_size   = 2
   instance_type  = "db.r8g.large"
+
+  # Required for cross-region encrypted replicas — AWS rejects secondary clusters
+  # with storage_encrypted=true unless a KMS key in the secondary region is explicit.
+  kms_key_arn = aws_kms_key.rds_secondary.arn
 
   # db_name and manage_admin_user_password are intentionally omitted on secondaries —
   # both are replicated from the primary and the module enforces this via preconditions.

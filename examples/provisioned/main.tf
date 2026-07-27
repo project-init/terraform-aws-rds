@@ -15,10 +15,19 @@ module "rds" {
   cluster_family = "aurora-postgresql17"
   engine_version = "17.6"
   db_name        = "aurora"
-  cluster_size   = 2
+  cluster_size   = 1
 
   # Provisioned instance class — min/max_capacity are not required when not using serverless
   instance_type = "db.r8g.large"
+
+  # Autoscaling — automatically adds/removes read replicas based on CPU utilization
+  enable_autoscaling             = true
+  autoscaling_min_replicas       = 1
+  autoscaling_max_replicas       = 3
+  autoscaling_metric             = "cpu"
+  autoscaling_target_value       = 70
+  autoscaling_scale_in_cooldown  = 300
+  autoscaling_scale_out_cooldown = 300
 
   iam_connect_readonly_user  = "readonly"
   iam_connect_writer_user    = "app"

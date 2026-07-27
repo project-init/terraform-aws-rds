@@ -209,3 +209,64 @@ variable "global_cluster_identifier" {
   description = "Identifier of the aws_rds_global_cluster this regional cluster belongs to. Required when cluster_role is 'primary' or 'secondary'."
   default     = null
 }
+
+variable "kms_key_arn" {
+  type        = string
+  description = "ARN of the KMS key to use for storage encryption. Required when cluster_role is 'secondary' (AWS requires an explicit KMS key for encrypted cross-region replicas)."
+  default     = null
+
+  validation {
+    condition     = var.cluster_role != "secondary" || var.kms_key_arn != null
+    error_message = "kms_key_arn is required when cluster_role is 'secondary'."
+  }
+}
+
+########################################################################################################################
+### Auto Scaling
+########################################################################################################################
+
+variable "enable_autoscaling" {
+  type        = bool
+  description = "Enable Application Auto Scaling for Aurora read replicas. Only valid for provisioned standalone or primary clusters."
+  default     = false
+}
+
+variable "autoscaling_min_replicas" {
+  type        = number
+  description = "Minimum number of read replicas. Required when enable_autoscaling is true."
+  default     = null
+}
+
+variable "autoscaling_max_replicas" {
+  type        = number
+  description = "Maximum number of read replicas. Required when enable_autoscaling is true."
+  default     = null
+}
+
+variable "autoscaling_metric" {
+  type        = string
+  description = "Metric to scale on. One of 'cpu' or 'connections'."
+  default     = "cpu"
+  validation {
+    condition     = contains(["cpu", "connections"], var.autoscaling_metric)
+    error_message = "autoscaling_metric must be 'cpu' or 'connections'."
+  }
+}
+
+variable "autoscaling_target_value" {
+  type        = number
+  description = "Target value for the scaling metric. Percentage (0-100) for 'cpu'; average count for 'connections'. Required when enable_autoscaling is true."
+  default     = null
+}
+
+variable "autoscaling_scale_in_cooldown" {
+  type        = number
+  description = "Seconds to wait after a scale-in event before allowing another scale-in."
+  default     = 300
+}
+
+variable "autoscaling_scale_out_cooldown" {
+  type        = number
+  description = "Seconds to wait after a scale-out event before allowing another scale-out."
+  default     = 300
+}

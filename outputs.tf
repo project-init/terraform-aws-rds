@@ -21,6 +21,11 @@ output "cluster_arn" {
   description = "ARN of the cluster"
 }
 
+output "kms_key_arn" {
+  value       = var.kms_key_arn
+  description = "ARN of the KMS key used for storage encryption. Useful when passing the primary region's key ARN to a secondary cluster module."
+}
+
 output "cluster_identifier" {
   value       = module.rds_cluster_aurora_postgres.cluster_identifier
   description = "Identifier of the cluster"

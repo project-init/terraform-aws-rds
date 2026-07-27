@@ -16,6 +16,16 @@ output "cluster_security_group_id" {
   description = "The ID of the security group created for the RDS cluster"
 }
 
+output "cluster_arn" {
+  value       = module.rds_cluster_aurora_postgres.arn
+  description = "ARN of the cluster"
+}
+
+output "cluster_identifier" {
+  value       = module.rds_cluster_aurora_postgres.cluster_identifier
+  description = "Identifier of the cluster"
+}
+
 output "admin_user_secret" {
   value       = module.rds_cluster_aurora_postgres.admin_user_secret
   description = "The Secrets Manager secret including the admin user credentials"

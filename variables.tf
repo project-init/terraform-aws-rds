@@ -189,3 +189,20 @@ variable "instance_identifier_suffix" {
     rename → replacement → unnecessary writer failover on every major version bump.
     EOT
 }
+
+variable "cluster_type" {
+  type        = string
+  description = "Whether this is a regional or global cluster."
+  default     = "regional"
+
+  validation {
+    condition     = contains(["regional", "global"], var.cluster_type)
+    error_message = "cluster_type must be either regional or global"
+  }
+}
+
+variable "global_cluster_identifier" {
+  type        = string
+  description = "Identifier of the Global cluster the regional cluster belongs to."
+  default     = null
+}

@@ -15,6 +15,10 @@ locals {
     min_capacity             = var.min_capacity
     seconds_until_auto_pause = var.seconds_until_auto_pause
   } : null
+
+  # Derive the underlying cluster_type expected by the cloudposse module.
+  # standalone maps to "regional"; primary and secondary both join a global cluster.
+  cluster_type = var.cluster_role == "standalone" ? "regional" : "global"
 }
 
 check "validate_iam_connect_users" {
@@ -57,6 +61,30 @@ resource "terraform_data" "serverless_capacity_required" {
   }
 }
 
+resource "terraform_data" "global_cluster_preconditions" {
+  lifecycle {
+    precondition {
+      condition     = var.cluster_role == "standalone" || var.global_cluster_identifier != null
+      error_message = "global_cluster_identifier is required when cluster_role is 'primary' or 'secondary'."
+    }
+
+    precondition {
+      condition     = var.cluster_role != "secondary" || var.db_name == null
+      error_message = "db_name must not be set on a secondary cluster — it is replicated from the primary."
+    }
+
+    precondition {
+      condition     = var.cluster_role == "secondary" || var.db_name != null
+      error_message = "db_name is required for standalone and primary clusters."
+    }
+
+    precondition {
+      condition     = var.cluster_role != "secondary" || !var.manage_admin_user_password
+      error_message = "manage_admin_user_password must be false on a secondary cluster — credentials are replicated from the primary."
+    }
+  }
+}
+
 module "rds_cluster_aurora_postgres" {
   source  = "cloudposse/rds-cluster/aws"
   version = "2.6.0"
@@ -72,10 +100,10 @@ module "rds_cluster_aurora_postgres" {
   storage_encrypted   = true
   deletion_protection = true
 
-  cluster_type              = var.cluster_type
+  cluster_type              = local.cluster_type
   global_cluster_identifier = var.global_cluster_identifier == null ? "" : var.global_cluster_identifier
 
-  db_name = var.db_name
+  db_name = var.db_name == null ? "" : var.db_name
   db_port = var.db_port
   vpc_id  = var.vpc_id
   subnets = var.subnets

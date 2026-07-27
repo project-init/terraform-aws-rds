@@ -210,6 +210,17 @@ variable "global_cluster_identifier" {
   default     = null
 }
 
+variable "kms_key_arn" {
+  type        = string
+  description = "ARN of the KMS key to use for storage encryption. Required when cluster_role is 'secondary' (AWS requires an explicit KMS key for encrypted cross-region replicas)."
+  default     = null
+
+  validation {
+    condition     = var.cluster_role != "secondary" || var.kms_key_arn != null
+    error_message = "kms_key_arn is required when cluster_role is 'secondary'."
+  }
+}
+
 ########################################################################################################################
 ### Auto Scaling
 ########################################################################################################################

@@ -129,6 +129,7 @@ module "rds_cluster_aurora_postgres" {
   engine_version      = var.engine_version
   cluster_size        = var.cluster_size
   storage_encrypted   = true
+  kms_key_arn         = var.kms_key_arn
   deletion_protection = true
 
   cluster_type              = local.cluster_type

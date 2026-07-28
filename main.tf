@@ -85,7 +85,7 @@ resource "terraform_data" "autoscaling_preconditions" {
         var.autoscaling_min_replicas != null &&
         var.autoscaling_max_replicas != null &&
         var.autoscaling_target_value != null &&
-        var.autoscaling_max_replicas > var.autoscaling_min_replicas
+        try(var.autoscaling_max_replicas > var.autoscaling_min_replicas, false)
       )
       error_message = "autoscaling_min_replicas, autoscaling_max_replicas (must be > min), and autoscaling_target_value are all required when enable_autoscaling is true."
     }

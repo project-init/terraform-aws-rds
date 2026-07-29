@@ -126,5 +126,6 @@ Check our [Examples](examples) for full usage information.
 | <a name="output_env_variables"></a> [env\_variables](#output\_env\_variables) | n/a |
 | <a name="output_iam_connect_user_policies"></a> [iam\_connect\_user\_policies](#output\_iam\_connect\_user\_policies) | n/a |
 | <a name="output_kms_key_arn"></a> [kms\_key\_arn](#output\_kms\_key\_arn) | ARN of the KMS key used for storage encryption. Useful when passing the primary region's key ARN to a secondary cluster module. |
+| <a name="output_port"></a> [port](#output\_port) | The port on which the RDS cluster accepts connections |
 | <a name="output_read_only_endpoint"></a> [read\_only\_endpoint](#output\_read\_only\_endpoint) | n/a |
 <!-- END_TF_DOCS -->

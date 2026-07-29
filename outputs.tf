@@ -36,6 +36,11 @@ output "admin_user_secret" {
   description = "The Secrets Manager secret including the admin user credentials"
 }
 
+output "port" {
+  value       = module.rds_cluster_aurora_postgres.port
+  description = "The port on which the RDS cluster accepts connections"
+}
+
 output "iam_connect_user_policies" {
   value = aws_iam_policy.rds_user_connect_policy
 }
